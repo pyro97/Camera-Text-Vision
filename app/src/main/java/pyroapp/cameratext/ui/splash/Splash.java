@@ -1,4 +1,4 @@
-package pyroapp.cameratext;
+package pyroapp.cameratext.ui.splash;
 
 
 import android.content.Intent;
@@ -9,20 +9,23 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class Splash extends AppCompatActivity {
-        private TextView testo;
-        private ImageView img;
-    @Override
+import pyroapp.cameratext.ui.main.MainActivity;
+import pyroapp.cameratext.R;
 
+public class Splash extends AppCompatActivity {
+        private TextView text;
+        private ImageView img;
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        testo=findViewById(R.id.textView);
+        text=findViewById(R.id.textView);
         img=findViewById(R.id.imageView);
         Animation animation= AnimationUtils.loadAnimation(this,R.anim.mytransition);
-        testo.startAnimation(animation);
+        text.startAnimation(animation);
         img.startAnimation(animation);
-        final Intent intent=new Intent(this,MainActivity.class);
+        final Intent intent=new Intent(this, MainActivity.class);
         Thread timer=new Thread(){
             public void run(){
                 try{

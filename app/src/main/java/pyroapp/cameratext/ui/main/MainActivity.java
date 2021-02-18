@@ -1,4 +1,4 @@
-package pyroapp.cameratext;
+package pyroapp.cameratext.ui.main;
 
 import android.Manifest;
 import android.content.ClipData;
@@ -17,10 +17,8 @@ import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -36,21 +34,22 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import pyroapp.cameratext.R;
+import pyroapp.cameratext.utils.Constants;
+
 public class MainActivity extends AppCompatActivity {
 
     SurfaceView cameraView;
-    TextView textView;
     CameraSource cameraSource;
     final int RequestCameraPermissionID = 100;
-    Button b;
     EditText editText;
     ImageButton imageButton;
-    String cliccato="stop";
-    FloatingActionButton copia,condividi;
+    String clicked = Constants.STOP;
+    FloatingActionButton copy, share;
     private InterstitialAd mInterstitialAd;
     private ScheduledExecutorService scheduler;
     private boolean isVisible;
-
+    private MainPresenter mainPresenter;
 
 
     @Override
@@ -79,71 +78,66 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cameraView = (SurfaceView) findViewById(R.id.surface_view);
-        editText=findViewById(R.id.editText);
+        cameraView = findViewById(R.id.surface_view);
+        editText = findViewById(R.id.editText);
         editText.setFocusable(false);
-        imageButton=findViewById(R.id.threadButton);
-        copia=findViewById(R.id.cop);
-        condividi=findViewById(R.id.cond);
-        final Vibrator vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE);
-        MobileAds.initialize(this, "ca-app-pub-9751551150368721~2128701981");
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-9751551150368721/6614741906");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
+        imageButton = findViewById(R.id.threadButton);
+        copy = findViewById(R.id.cop);
+        share = findViewById(R.id.cond);
+        final Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        mainPresenter = new MainPresenter(this);
+        mainPresenter.initializeBanner();
+        mInterstitialAd = mainPresenter.initializeInterstitial();
 
         imageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 vibrator.vibrate(100);
-                if(cliccato.equalsIgnoreCase("start")){
-                    imageButton.setImageResource(R.mipmap.cazzo_fore);
-                    cliccato="stop";
-                }
-                else {
+                if (clicked.equalsIgnoreCase(Constants.START)) {
+                    imageButton.setImageResource(R.mipmap.cz_fore);
+                    clicked = Constants.STOP;
+                } else {
                     imageButton.setImageResource(R.mipmap.a_f);
 
-                    cliccato="start";
+                    clicked = Constants.START;
                 }
             }
         });
 
-        copia.setOnClickListener(new View.OnClickListener() {
+        copy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 vibrator.vibrate(100);
-                imageButton.setImageResource(R.mipmap.cazzo_fore);
-                cliccato="stop";
-                if(editText.getText().length()>0){
-                    ClipboardManager clipboardManager= (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    ClipData clip=ClipData.newPlainText("Copiato",editText.getText().toString());
+                imageButton.setImageResource(R.mipmap.cz_fore);
+                clicked = Constants.STOP;
+                if (editText.getText().length() > 0) {
+                    ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                    ClipData clip = ClipData.newPlainText(Constants.COPIED, editText.getText().toString());
                     clipboardManager.setPrimaryClip(clip);
-                    Toast.makeText(getApplicationContext(),"Copied",Toast.LENGTH_SHORT).show();
-                    //pubblicita
-                }else  if(editText.getText().length()==0){
-                    Toast.makeText(getApplicationContext(),"No Text",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), Constants.COPIED, Toast.LENGTH_SHORT).show();
+                } else if (editText.getText().length() == 0) {
+                    Toast.makeText(getApplicationContext(), Constants.NO_TEXT, Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        condividi.setOnClickListener(new View.OnClickListener() {
+        share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 vibrator.vibrate(100);
-                imageButton.setImageResource(R.mipmap.cazzo_fore);
-                cliccato="stop";
-                if(editText.getText().length()>0){
-                    Intent sendIntent=new Intent();
+                imageButton.setImageResource(R.mipmap.cz_fore);
+                clicked = Constants.STOP;
+                if (editText.getText().length() > 0) {
+                    Intent sendIntent = new Intent();
                     sendIntent.setAction(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT,editText.getText().toString());
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, editText.getText().toString());
                     sendIntent.setType("text/plain");
                     startActivity(sendIntent);
-                }else  if(editText.getText().length()==0){
-                    Toast.makeText(getApplicationContext(),"No Text",Toast.LENGTH_SHORT).show();
+                } else if (editText.getText().length() == 0) {
+                    Toast.makeText(getApplicationContext(), Constants.NO_TEXT, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-
 
 
         TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
@@ -196,19 +190,17 @@ public class MainActivity extends AppCompatActivity {
                 public void receiveDetections(Detector.Detections<TextBlock> detections) {
 
                     final SparseArray<TextBlock> items = detections.getDetectedItems();
-                    if(items.size() != 0)
-                    {
+                    if (items.size() != 0) {
                         editText.post(new Runnable() {
                             @Override
                             public void run() {
                                 StringBuilder stringBuilder = new StringBuilder();
-                                for(int i =0;i<items.size();++i)
-                                {
+                                for (int i = 0; i < items.size(); ++i) {
                                     TextBlock item = items.valueAt(i);
                                     stringBuilder.append(item.getValue());
                                     stringBuilder.append("\n");
                                 }
-                                if(cliccato.equalsIgnoreCase("start")){
+                                if (clicked.equalsIgnoreCase(Constants.START)) {
                                     editText.setText(stringBuilder.toString());
 
                                 }
@@ -221,10 +213,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         super.onStart();
         isVisible = true;
-        if(scheduler == null){
+        if (scheduler == null) {
             scheduler = Executors.newSingleThreadScheduledExecutor();
             scheduler.scheduleAtFixedRate(new Runnable() {
                 public void run() {
@@ -233,9 +225,8 @@ public class MainActivity extends AppCompatActivity {
                             if (mInterstitialAd.isLoaded() && isVisible) {
                                 mInterstitialAd.show();
                             }
-                            mInterstitialAd = new InterstitialAd(MainActivity.this);
-                            mInterstitialAd.setAdUnitId("ca-app-pub-9751551150368721/3787685515");
-                            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                            mInterstitialAd = mainPresenter.initializeInterstitial();
+
                         }
                     });
                 }
@@ -244,12 +235,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
     }
+
     @Override
     protected void onStop() {
         super.onStop();
         scheduler.shutdownNow();
         scheduler = null;
-        isVisible =false;
+        isVisible = false;
     }
 
 

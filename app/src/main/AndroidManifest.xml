@@ -13,14 +13,14 @@
         android:roundIcon="@mipmap/camera_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Splash">
+        <activity android:name=".ui.splash.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
+        <activity android:name=".ui.main.MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:label="Camera Text Vision"
             android:theme="@style/AppTheme"

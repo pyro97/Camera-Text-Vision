@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/common_google_signin_btn_text_dark_default"
-    tools:context=".MainActivity">
+    tools:context=".ui.main.MainActivity">
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/cond"
@@ -72,7 +72,7 @@
             android:layout_alignParentStart="true"
             android:background="@color/common_google_signin_btn_text_dark_default"
             android:elevation="24dp"
-            app:srcCompat="@mipmap/cazzo_fore" />
+            app:srcCompat="@mipmap/cz_fore" />
 
 
     </LinearLayout>
