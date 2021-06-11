@@ -1,5 +1,6 @@
 # Camera-Text-Vision
 Android app published on Google Play Store. It consists of an tool app that allows to scan in real-time the text displayed by the smartphone camera, using Google Cloud Vision API.
+<br>
 Google Play: https://cutt.ly/VnPOBKq
 
 <br>
