@@ -13,7 +13,7 @@ Google Play: https://cutt.ly/VnPOBKq
 
 #### This app has following packages:
 1. **ui**: View classes along with their corresponding Presenter.
-3. **utils**: Utility classes.
+2. **utils**: Utility classes.
 
 
 #### This is a MVC Java Project
