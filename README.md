@@ -4,7 +4,6 @@ Google Play: https://cutt.ly/VnPOBKq
 
 <br>
 <p align="center">
-  <img src="readme/camera1.png" width="300">
   <img src="readme/camera2.png" width="300">
   <img src="readme/camera3.png" width="300">
 
