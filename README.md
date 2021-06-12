@@ -16,7 +16,7 @@ Google Play: https://cutt.ly/VnPOBKq
 2. **utils**: Utility classes.
 
 
-#### This is a MVC Java Project
+#### This is a MVP Java Project
 - I used Google Cloud Vision API to scan text in real-time
 - I used Google Mobile Ads to show banner and interstitial
 
